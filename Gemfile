@@ -1,10 +1,10 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.2.1'
+gem 'rails', '3.2.13'
 
 gem 'therubyracer', '0.10.1'
 
-gem 'tinymce-rails'
+gem 'tinymce-rails', '3.5.8'
 
 gem 'maktoub', :git => 'https://github.com/coorasse/maktoub.git'
 
@@ -90,7 +90,9 @@ gem 'cancan'
 
 gem 'foreigner'
 
+gem 'simple_form'
 gem 'client_side_validations', :git => 'https://github.com/bcardarella/client_side_validations.git', :branch => '3-2-stable'
+gem 'client_side_validations-simple_form'
 #gem 'ar_fixtures'
 
 gem 'sitemap_generator'
@@ -140,3 +142,8 @@ gem 'icalendar'
 gem 'private_pub'
 
 gem 'rotp'
+
+gem 'forem', :github => "radar/forem"
+
+gem 'forem-bootstrap', :github => "radar/forem-bootstrap"
+#gem 'forem-theme-base', :github => 'radar/forem-theme-base'

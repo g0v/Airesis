@@ -66,6 +66,9 @@ class Group < ActiveRecord::Base
 
   has_many :group_affinities, dependent: :destroy
 
+  has_many :forum_categories, :class_name => 'Forem::Category', :foreign_key => 'group_id'
+  has_many :forums, :class_name => 'Forem::Forum', through: :forum_categories
+
 
   # Check for paperclip
   has_attached_file :image,
@@ -151,7 +154,7 @@ class Group < ActiveRecord::Base
   
   #restituisce la lista dei portavoce del gruppo
   def portavoce
-    return self.partecipants.where(:conditions => {"group_partecipations.partecipation_role_id" => 2})
+    self.partecipants.where({"group_partecipations.partecipation_role_id" => 2})
   end
     
   def partecipant_tokens=(ids)

@@ -112,11 +112,11 @@
         </div>
 
         <div id="login_panel" style="display:none;">
-          <%= form_for resource, :as => resource_name, :url => {:action => "create", :controller => "devise/sessions"}, :html => {:class => 'box'} do |f| %>
+          <%= form_for resource, :as => resource_name, :url => main_app.url_for({:action => "create", :controller => "devise/sessions"}), :html => {:class => 'box'} do |f| %>
 
               <%= f.text_field :login, placeholder: t('pages.header.login_placeholder') %>
 
-              <%= f.password_field :password, placeholder: 'Password' %>         <br/>
+              <%= f.password_field :password, placeholder: 'Password' %><br/>
               <%= f.check_box :remember_me %> <%= f.label :remember_me, t('pages.header.menu.remember_me') %>
 
               <%= f.button t('pages.header.menu.login_button'), :class => "btn blue loginButton" %>
@@ -154,15 +154,15 @@
         </div>
     <% end %>
 
-    <%= link_to (image_tag 'cur-love.png'), sostienici_path, :class => 'cur love', title: t('pages.header.support_us') %>
+    <%= link_to (image_tag 'cur-love.png'), main_app.sostienici_path, :class => 'cur love', title: t('pages.header.support_us') %>
     <%= image_tag 'cur-info.png', :class => 'cur info', title: 'TUTORIAL' %>
     <div id="help_panel" style="display:none;">
       <%= link_to 'SEGNALAZIONI', '#', title: 'FEEDBACK', onclick: "$('.feedbackBtn').click();return false;" %> <br/>
-      <%= link_to 'VIDEOGUIDE', videoguide_path, title: 'VIDEOGUIDE' %> <br/>
+      <%= link_to 'VIDEOGUIDE', main_app.videoguide_path, title: 'VIDEOGUIDE' %> <br/>
       <%= link_to 'FAQ', '#', title: 'FAQ' %> <br/>
       <%= link_to 'GUIDA', '#', title: 'GUIDA' %> <br/>
-      <%= link_to "COS'È AIRESIS", edemocracy_path, title: "COS'È AIRESIS" %> <br/>
-      <%= link_to "CHI SIAMO", chisiamo_path, title: 'CHI SIAMO' %>
+      <%= link_to "COS'È AIRESIS", main_app.edemocracy_path, title: "COS'È AIRESIS" %> <br/>
+      <%= link_to "CHI SIAMO", main_app.chisiamo_path, title: 'CHI SIAMO' %>
     </div>
 
 
@@ -187,19 +187,19 @@
 
         <div class="tria"></div>
       </div>
-      <div class="tag"><%= link_to t('pages.header.open_group'), new_group_path %></div>
-      <div class="tag"><%= link_to t('pages.header.new_group'), groups_path %></div>
+      <div class="tag"><%= link_to t('pages.header.open_group'), main_app.new_group_path %></div>
+      <div class="tag"><%= link_to t('pages.header.new_group'), main_app.groups_path %></div>
     </div>
     <div class="group-tag1">
       <div class="group-item">
         <div style="width:45px;height: 30px; float:left;">
           <%= image_tag 'logo30.png', :width => 30, :alt => APP_LONG_NAME %>
         </div>
-        <span class="p1"><%= link_to t('open_space'), proposals_path %></span>
+        <span class="p1"><%= link_to t('open_space'), main_app.proposals_path %></span>
 
         <div class="p2">
-          <%= link_to t('pages.header.groups.proposals'), proposals_path %> -
-          <%= link_to t('pages.header.groups.events'), events_path %></div>
+          <%= link_to t('pages.header.groups.proposals'), main_app.proposals_path %> -
+          <%= link_to t('pages.header.groups.events'), main_app.events_path %></div>
       </div>
       <% if user_signed_in? %>
           <% @groups = current_user.groups %>
@@ -212,11 +212,11 @@
                     <div style="width:45px;height: 30px; float:left;">
                       <%= group.group_image_tag(30) rescue nil %>
                     </div>
-                    <span class="p1"><%= link_to group.name, group %></span>
+                    <span class="p1"><%= link_to group.name, main_app.group_path(group) %></span>
 
                     <div class="p2">
-                      <%= link_to t('pages.header.groups.proposals'), group_proposals_path(group) %> -
-                      <%= link_to t('pages.header.groups.events'), group_events_path(group) %></div>
+                      <%= link_to t('pages.header.groups.proposals'), main_app.group_proposals_path(group) %> -
+                      <%= link_to t('pages.header.groups.events'), main_app.group_events_path(group) %></div>
                   </div>
               <% end %>
           <% end %>
@@ -236,30 +236,30 @@
 
         <div class="sep"></div>
         <li>
-          <%= link_to t('pages.header.menu.my_page'), root_url %>
+          <%= link_to t('pages.header.menu.my_page'), main_app.root_url %>
         </li>
         <li>
           <% if current_user.blog %>
-              <%= link_to t('pages.header.menu.my_blog'), current_user.blog %>
+              <%= link_to t('pages.header.menu.my_blog'), main_app.blog_path(current_user.blog) %>
           <% else %>
-              <%= link_to t('pages.header.menu.create_blog'), new_blog_path %>
+              <%= link_to t('pages.header.menu.create_blog'), main_app.new_blog_path %>
           <% end %>
         </li>
         <li>
-          <%= link_to t('pages.header.menu.preferences'), user_url(current_user) %>
+          <%= link_to t('pages.header.menu.preferences'), main_app.user_path(current_user) %>
         </li>
         <div class="sep"></div>
         <li>
-          <%= link_to t('pages.header.menu.logout'), destroy_user_session_path, :method => 'delete' %>
+          <%= link_to t('pages.header.menu.logout'), main_app.destroy_user_session_path, :method => 'delete' %>
         </li>
         <% if is_moderator? %>
             <li>
-              <%= link_to t('pages.header.menu.moderator'), moderator_panel_path %>
+              <%= link_to t('pages.header.menu.moderator'), main_app.moderator_panel_path %>
             </li>
         <% end %>
         <% if is_admin? %>
             <li>
-              <%= link_to t('pages.header.menu.administration'), admin_panel_path %>
+              <%= link_to t('pages.header.menu.administration'), main_app.admin_panel_path %>
             </li>
             <div class="sep"></div>
 
@@ -271,6 +271,9 @@
             <% end %>
 
         <% end %>
+        <% if current_user.forem_admin %>
+            <%= link_to "AMMINISTRAZIONE FORUM", forem.admin_root_url %>
+        <%end%>
       </div>
     </div>
 <% end %>
@@ -411,7 +414,7 @@
         $.ajax({
             dataType: 'json',
             type: 'get',
-            url: "<%=polling_alerts_path%>",
+            url: "<%=main_app.polling_alerts_path%>",
             success: function (data) {
                 $('.alert_box.logo').each(function () {
                     $(this).qtip('destroy');

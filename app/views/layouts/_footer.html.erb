@@ -5,10 +5,10 @@
     </div>
 
     <div class="pull-right" style="float:right;">
-      <%= link_to t('guide'), videoguide_path, :class => "video_faq" %> -
-      <%= link_to t('pages.home.index.support'), sostienici_path %> -
-      <%= link_to t('terms_of_service'), terms_path, remote: true, class: 'terms_link' %> -
-      <%= link_to t('privacy_policy'), privacy_path, remote: true, class: 'privacy_link' %> -
+      <%= link_to t('guide'), main_app.videoguide_path, :class => "video_faq" %> -
+      <%= link_to t('pages.home.index.support'), main_app.sostienici_path %> -
+      <%= link_to t('terms_of_service'), main_app.terms_path, remote: true, class: 'terms_link' %> -
+      <%= link_to t('privacy_policy'), main_app.privacy_path, remote: true, class: 'privacy_link' %> -
     </div>
 
     <div>

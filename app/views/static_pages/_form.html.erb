@@ -1,0 +1,27 @@
+
+<%=form_for @static_page, url: {controller: 'static_pages', action: :update, key: @static_page.key} do |f|%>
+    <%=f.text_area :content, style: 'width: 800px' %>
+    <%= f.button 'Salva', value: 'save', class:'btn blue' %>
+    <%= f.button 'Anteprima', value: 'preview', class:'btn' %>
+<%end%>
+
+
+<script type="text/javascript">
+    tinyMCE.init({
+        mode: 'exact',
+        elements: 'static_page_content',
+        theme: 'advanced',
+        theme_advanced_toolbar_location: 'top',
+        theme_advanced_toolbar_align: 'left',
+        theme_advanced_buttons1: 'bold,italic,underline,separator,undo,redo,separator,bullist,numlist,separator,link,unlink,anchor,html,code',
+        theme_advanced_buttons2: '',
+        theme_advanced_buttons3: '',
+        relative_urls: false,
+        plugins: 'legacyoutput,media,inlinepopups,autolink,paste',
+        formats: {
+            underline: { inline: 'u' }
+        },
+        paste_auto_cleanup_on_paste: true,
+        theme_advanced_statusbar_location: "none"
+    });
+</script>

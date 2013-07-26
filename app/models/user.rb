@@ -118,6 +118,18 @@ class User < ActiveRecord::Base
   scope :unconfirmed, {:conditions => 'confirmed_at is null'}
 
 
+
+  def to_s
+    "<a href='/users/#{self.to_param}'>#{self.fullname}</a>".html_safe
+  end
+  def forem_admin
+    admin?
+  end
+
+  #def can_read_forem_forums?
+  #  admin?
+  #quend
+
   def email_required?
     super && !(has_provider('twitter') || has_provider('linkedin'))
   end

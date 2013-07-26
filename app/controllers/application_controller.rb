@@ -3,6 +3,12 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
+
+  def forem_user
+    current_user
+  end
+  helper_method :forem_user
+
   include NotificationHelper
   helper :all # include all helpers, all the time
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
@@ -78,7 +84,7 @@ class ApplicationController < ActionController::Base
 
   #helper method per determinare se l'utente attualmente collegato è amministratore di sistema
   def is_moderator?
-    user_signed_in? && current_user.moderator?
+    user_signed_in? && (current_user.moderator? || current_user.admin?)
   end
 
   #helper method per determinare se l'utente attualmente collegato è il proprietario di un determinato oggetto

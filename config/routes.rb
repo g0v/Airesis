@@ -1,6 +1,5 @@
 Airesis::Application.routes.draw do
 
-
   resources :announcements do
     member do
       post :hide
@@ -213,6 +212,9 @@ Airesis::Application.routes.draw do
 
     resources :group_partecipations
 
+    mount Forem::Engine, :at => '/'
+
+
     resources :proposals do
       collection do
         get :search
@@ -292,6 +294,9 @@ Airesis::Application.routes.draw do
   end
 
 
+  resources :static_pages
+
+
   match 'elfinder' => 'elfinder#elfinder'
 
   match '/tags/:text', :to => 'tags#show', :as => 'tag'
@@ -320,12 +325,18 @@ Airesis::Application.routes.draw do
   match '/bugtracking' => 'home#bugtracking'
   match '/videoguide' => 'home#videoguide'
   match '/edemocracy' => 'home#whatis'
-  match '/sostienici' => 'home#helpus'
-  match '/press' => 'home#press'
+  match 'sostienici', to: 'home#helpus', as: 'sostienici'
+
+  match '/press', method: 'get', to: 'static_pages#show', key: 'press'
+  match '/press/edit', to: 'static_pages#edit', key: 'press', as: 'edit_press'
+  match '/press/', method: 'post', to: 'static_pages#update', key: 'press', as: 'update_press'
+
   match '/privacy' => 'home#privacy'
   match '/terms' => 'home#terms'
   match '/send_feedback' => 'home#feedback'
   match '/statistics' => 'home#statistics'
+
+
 
   admin_required = lambda do |request|
     request.env['warden'].authenticate? and request.env['warden'].user.admin?
@@ -340,8 +351,6 @@ Airesis::Application.routes.draw do
     match 'moderator_panel', :to => 'moderator#show', :as => 'moderator/panel'
   end
 
-
-
   constraints admin_required do
     mount Resque::Server, :at => "/resque_admin/"
     mount Maktoub::Engine => "/maktoub/"
@@ -350,8 +359,15 @@ Airesis::Application.routes.draw do
     match 'admin_panel', :to => 'admin#show', :as => 'admin/panel'
   end
 
-
   resources :tokens, :only => [:create, :destroy]
+
+  # This line mounts Forem's routes at /forums by default.
+  # This means, any requests to the /forums URL of your application will go to Forem::ForumsController#index.
+  # If you would like to change where this extension is mounted, simply change the :at option to something different.
+  #
+  # We ask that you don't use the :as option here, as Forem relies on it being the default of "forem"
+
+
 
   #authenticate :admin do
   #  mount Resque::Server, :at => "/resque_admin"
