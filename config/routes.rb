@@ -212,7 +212,7 @@ Airesis::Application.routes.draw do
 
     resources :group_partecipations
 
-    mount Forem::Engine, :at => '/'
+    mount Forem::Engine, :at => '/forum/'
 
 
     resources :proposals do

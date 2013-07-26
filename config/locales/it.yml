@@ -312,6 +312,7 @@ it:
         settings: "IMPOSTAZIONI"
         elections: "ELEZIONI"
         documents: "DOCUMENTI"
+        forums: "FORUM"
     login:
       title: "Esegui l'autenticazione"
     confirmation:

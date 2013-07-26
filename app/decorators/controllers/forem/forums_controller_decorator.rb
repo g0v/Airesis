@@ -1,6 +1,8 @@
 Forem::ForumsController.class_eval do
   before_filter :load_group
 
+  layout 'groups'
+
   def index
     @categories = @group.forum_categories
   end
