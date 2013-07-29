@@ -90,7 +90,7 @@
 
 <div id="menu-top" style="right:0px;min-width:1000px;">
   <div id="logo-airesis">
-    <%= link_to (image_tag 'logo.png', class: "logo1"), root_path %>
+    <%= link_to (image_tag 'logo.png', class: "logo1"), main_app.root_path %>
   </div>
   <div class="sep1"></div>
   <div id="menu-group">
@@ -271,9 +271,7 @@
             <% end %>
 
         <% end %>
-        <% if current_user.forem_admin %>
-            <%= link_to "AMMINISTRAZIONE FORUM", forem.admin_root_url %>
-        <%end%>
+
       </div>
     </div>
 <% end %>

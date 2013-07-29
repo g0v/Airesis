@@ -6,7 +6,7 @@
 
 <br>
 <footer id='admin_link'>
-  <% if forem_admin? %>
+  <% if forem_group_admin?(@group) %>
     <%= link_to t("area", :scope => "forem.admin"), forem.admin_root_path %>
   <% end %>
 </footer>

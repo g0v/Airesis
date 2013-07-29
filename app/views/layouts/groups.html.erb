@@ -38,7 +38,7 @@
 
           <% end %>
           <span> ⋅ </span>
-          <%= link_to t('pages.groups.header.forums'), forums_path, class: (params[:controller] == 'forums' ? 'sel' : '') %>
+          <%= link_to t('pages.groups.header.forums'), "/groups/#{@group.to_param}/forum", class: (params[:controller] == 'forums' ? 'sel' : '') %>
           <% if can? :update, @group %>
               <span> ⋅ </span>
               <%= link_to t('pages.groups.header.settings'), main_app.edit_group_path(@group), class: ((params[:controller] == 'groups' && params[:action] != 'show') || (params[:controller] == 'group_areas') ? 'sel' : '') %>

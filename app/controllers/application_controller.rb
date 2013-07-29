@@ -44,6 +44,14 @@ class ApplicationController < ActionController::Base
 
   helper_method :is_admin?,:is_moderator?, :is_proprietary?, :current_url, :link_to_auth, :mobile_device?, :age
 
+  def forem_group_admin?(group)
+    forem_user && (group.portavoce.include? current_user)
+  end
+
+  helper_method :forem_group_admin?
+
+
+
 
   def log_error(exception)
     notifier = Rails.application.config.middleware.detect { |x| x.klass == ExceptionNotifier }
