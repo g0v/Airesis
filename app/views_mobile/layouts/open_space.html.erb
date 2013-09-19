@@ -1,0 +1,23 @@
+<html>
+<head>
+  <title></title>
+  <%= stylesheet_link_tag "jqtouch/jqtouch" %>
+  <%= javascript_include_tag "jquery", "jqtouch/jqtouch-jquery.min.js", "jqtouch/jqtouch.min.js", "mobile" %>
+
+</head>
+<body>
+<div class="current">
+  <div class="toolbar">
+    <%= link_to "Back", nil, :class => "back" unless current_page? root_path %>
+  </div>
+  <% unless flash.empty? %>
+      <div class="info">
+        <%- flash.each do |name, msg| -%>
+            <%= content_tag :div, msg, :id => "flash_#{name}" %>
+        <%- end -%>
+      </div>
+  <% end %>
+  <%= yield :layout %>
+</div>
+</body>
+</html>

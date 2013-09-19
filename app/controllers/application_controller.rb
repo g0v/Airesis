@@ -11,10 +11,30 @@ class ApplicationController < ActionController::Base
   before_filter :store_location #store the address where you come from
   before_filter :set_locale
 
-  before_filter :prepare_for_mobile
+  #before_filter :prepare_for_mobile
 
+  def check_for_mobile
+    session[:mobile_override] = params[:mobile] if params[:mobile]
+    prepare_for_mobile if mobile_device?
+  end
+
+  def prepare_for_mobile
+    prepend_view_path Rails.root + 'app' + 'views_mobile'
+  end
+
+  def mobile_device?
+    if session[:mobile_override]
+      session[:mobile_override] == "1"
+    else
+      # Season this regexp to taste. I prefer to treat iPad as non-mobile.
+      (request.user_agent =~ /Android/) && (request.user_agent !~ /iPad/)
+    end
+  end
+  helper_method :mobile_device?
 
   protected
+
+
 
 
   def load_group
@@ -314,21 +334,4 @@ class ApplicationController < ActionController::Base
       end
     end
   end
-
-
-  private
-
-  def prepare_for_mobile
-    session[:mobile_param] = params[:mobile] if params[:mobile]
-    request.format = :mobile if false #mobile_device?
-  end
-
-  def mobile_device?
-    if session[:mobile_param]
-      session[:mobile_param] == "1"
-    else
-      request.user_agent =~ /Mobile|webOS/
-    end
-  end
-
 end

@@ -16,6 +16,8 @@ class GroupsController < ApplicationController
   #l'utente deve essere portavoce o amministratore
   before_filter :portavoce_required, :only => [:edit, :update, :edit_permissions, :enable_areas, :edit_proposals]
 
+  before_filter :check_for_mobile, :only => :index
+
   def index
     unless request.xhr?
       @tags = Tag.where(['groups_count > 0']).all
