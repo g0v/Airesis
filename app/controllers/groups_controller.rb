@@ -16,7 +16,7 @@ class GroupsController < ApplicationController
   #l'utente deve essere portavoce o amministratore
   before_filter :portavoce_required, :only => [:edit, :update, :edit_permissions, :enable_areas, :edit_proposals]
 
-  before_filter :check_for_mobile, :only => :index
+  before_filter :prepare_for_mobile, :only => [:index,:show]
 
   def index
     unless request.xhr?

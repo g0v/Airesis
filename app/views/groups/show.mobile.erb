@@ -1,0 +1,33 @@
+<div data-role="content">
+  <% if can? :view_data, @group %>
+
+      <div class="group_description">
+        <%= raw (h @group.description).gsub(/\n/, "<br>") %></div>
+      <div class="group_show_page">
+        <div class="posts_container_main">
+          <div id="posts_container">
+            <% if @group_posts.count == 0 %>
+                <div class="blogPost">
+                  <p>
+                    <%= t('pages.groups.show.no_blogs_yet') %>
+                  </p>
+                </div>
+            <% else %>
+                <%= render :collection => @group_posts, :partial => 'blog_posts/group_blog_post', formats: :html, as: 'blog_post' %>
+
+            <% end %>
+          </div>
+          <% if @group_posts.count > COMMENTS_PER_PAGE %>
+              <div id="loading_results" class="post_results">
+                <span><%= t('pages.blogs.show.previous_posts') %></span>
+              </div>
+          <% end %>
+        </div>
+        <div class="group_infos">
+          <%#= render :partial => "groups/portlets/proposals", :layout => "layouts/portlet" %>
+        </div>
+      </div>
+  <% end %>
+</div>
+
+<%#= render :partial => 'left_panel' %>

@@ -1,0 +1,35 @@
+<div data-role="content">
+  <div data-role="fieldcontain">
+    <input name="" id="searchinput1" placeholder="" value="" type="search">
+  </div>
+  <input type="submit" value="Submit">
+  <ul data-role="listview" data-divider-theme="b" data-inset="true">
+    <li data-role="list-divider" role="heading">
+      Elenco gruppi
+    </li>
+    <li data-theme="c">
+      <%@group = Group.find(1) %>
+      <%= link_to @group.name, group_url(@group), data: {transition: 'slide'} %>
+    </li>
+    <li data-theme="c">
+      <a href="#page1" data-transition="slide">
+        Gruppo 1
+      </a>
+    </li>
+    <li data-theme="c">
+      <a href="#page1" data-transition="slide">
+        Gruppo 2
+      </a>
+    </li>
+    <li data-theme="c">
+      <a href="#page1" data-transition="slide">
+        Gruppo 3
+      </a>
+    </li>
+    <li data-theme="c">
+      <a href="#page1" data-transition="slide">
+        Gruppo 4
+      </a>
+    </li>
+  </ul>
+</div>
