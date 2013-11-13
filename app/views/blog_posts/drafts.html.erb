@@ -1,0 +1,24 @@
+
+<%=render :layout => "layouts/page_title", :locals => {:title => @page_title} do%>
+<%end%>
+
+
+<% if @blog_posts.size == 0 && !params[:page] %>
+	<div class="blogPost">
+		<h1>Nessun Post</h1>
+		<p>Non ci sono post da pubblicare al momento.</p>
+	</div>
+<% else %>
+	<%= render :collection => @blog_posts, :partial => 'blog_post' %>
+<% end %>
+
+<div class="blogPages">
+	<%= will_paginate @blog_posts %>
+</div>
+
+<% content_for :left_panel do %>
+    <div class="mybox">
+
+      <%= render :partial => 'blog_posts/admin_links' %>
+    </div>
+<%end%>

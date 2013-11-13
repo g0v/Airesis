@@ -1,0 +1,127 @@
+<% content_for :left_panel do %>
+    <% if can? :view_data, @group %>
+
+        <% if ::Configuration::socialnetwork_active %>
+            <div class="mybox">
+              <a href="https://twitter.com/share"
+                 class="twitter-share-button"
+                 data-lang="en"
+                 data-count="vertical"
+                 data-text="Partecipa a questo gruppo su #<%= APP_SHORT_NAME %>">Tweet</a>
+
+              <g:plusone size="tall"></g:plusone>
+
+
+              <%= raw facebook_like %>
+
+            </div>
+        <% end %>
+    <% end %>
+
+    <div class="mybox">
+      <a href="#" onclick="openRulesModal();return false;" class="btn notesButton"><%= t('pages.groups.show.rules_button') %></a>
+
+
+      <div id="rules_modal" title="<%= t('pages.groups.show.rules_button') %>" style="width:400px;height:400px;display:none;text-align: justify">
+        <% if @group.rule_book && !@group.rule_book.empty? %>
+            <%= raw @group.rule_book %>
+        <% else %>
+            <div><%= t('pages.groups.show.rule_book_html')%>
+              <ul>
+                <li>Partecipazione:</li>
+                <% if @group.request_by_vote? %>
+                    Quando un utente richiede di partecipare al gruppo, tutti gli altri partecipanti devono esprimere
+                    il loro parere entro X giorni, al termine dei quali viene determinato se l'utente può entrare o meno. <!--TODO:il18n-->
+                <% elsif @group.request_by_portavoce? %>
+                    Quando un utente richiede di partecipare al gruppo, l'accettazione è consentita solo ai portavoce
+                    del gruppo stesso. Una volta che il portavoce avrà accettato la richiesta, l'utente sarà a tutti gli
+                    effetti un partecipante del gruppo. <!--TODO:il18n-->
+                <% end %>
+              </ul>
+            </div>
+        <% end %>
+      </div>
+
+      <script type="text/javascript">
+          function openRulesModal() {
+              $("#rules_modal").dialog({ height: 'auto', width: 600 });
+              return false;
+          }
+      </script>
+
+
+      <% if can? :view_data, @group %>
+
+          <% if user_signed_in? && current_user.blog %>
+              <% if (can? :post_to, @group) %>
+                  <%= link_to t('pages.groups.show.post_button'), new_blog_blog_post_url(current_user.blog, :group_id => @group.id), :class => 'btn green newButton', :style => "margin-top:4px;" %>
+                  <br/>
+              <% end %>
+          <% else %>
+              <%= link_to t('pages.groups.show.blog_button'), new_blog_path, :class => 'btn green newButton', :style => "margin-top:4px;" %>
+              <br/>
+          <% end %>
+      <% end %>
+    </div>
+
+    <% if can? :view_data, @group %>
+
+        <div id="partecipants_container" class="mybox">
+          <%= render :partial => 'partecipants_panel' %>
+        </div>
+
+        <div id="partecipation_requests_container">
+        <%= render :partial => 'partecipation_requests_panel' %>
+        </div>
+
+        <% voting = @group.partecipation_requests.voting
+           if voting.size > 0 %>
+            <div class="mybox">
+              <p>
+              <h4>Elenco delle richieste di partecipazione in corso di votazione</h4>
+              </p>
+              <% voting.each do |request| %>
+                  <p>
+                    <%= link_to_user request.user, :full_name => true %>
+                    <a>Vota SI</a>
+                    - <a>Vota NO</a>
+                  </p>
+              <% end %>
+            </div>
+        <% end %>
+
+        <br/>
+        <!--
+     <h4>Al momento seguono il gruppo <%= @group.followers.count %> persone</h4>
+     <% if current_user
+                                                                                         follow = (@group.partecipants.include? current_user) || (@group.followers.include? current_user)
+        end
+        if !follow %>
+            <%= link_to 'Segui', {:action => "ask_for_follow", :controller => "groups", :id => @group.id}, :id => 'group_follow', :class => "buttonStyle littleText disableButton" %>
+            <br/>(notifiche non ancora attive, spiacente)
+     <% end %>
+        -->
+
+        <% @mypartecipation = @group.group_partecipations.where(:user_id => current_user.id).first if current_user %>
+        <% if @mypartecipation %>
+            <div class="mybox">
+              <div id="permissions_list_container" title="<%= t('pages.groups.show.list_permissions.title') %>"></div>
+              <%= link_to t('pages.groups.show.list_permissions.button'), permissions_list_group_path(@group), remote: true, class: 'btn infoButton' unless @group.portavoce.include? current_user %>
+              <%= link_to t('pages.users.show.get_out_of_group_button'), group_group_partecipation_path(@group, @mypartecipation), :method => :delete, :confirm => t('pages.users.show.get_out_of_group_confermation'), class: 'btn' if can? :destroy, @mypartecipation %>
+              <%= link_to t('pages.groups.show.destroy_button'), @group, method: :delete, confirm: t('pages.groups.show.confirm_destroy'), class: 'btn red trashButton' if can? :destroy, @group %>
+            </div>
+        <% end %>
+
+
+
+
+    <% else %>
+        <div class="mybox">
+          <p>
+            <%= link_to t('pages.groups.show.ask_participate_button'), url_for(:action => "ask_for_partecipation", :controller => "groups", :id => @group.id), :class => "btn blue editButton" %>
+          </p>
+        </div>
+    <% end %>
+
+
+<% end %>

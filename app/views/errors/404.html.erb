@@ -1,0 +1,16 @@
+<%@extend=true%>
+	<style type="text/css">
+		div.error_dialog {
+			width: 25em;
+			padding: 0 4em;
+			margin: 0px auto 20px;
+			border: 1px solid #ccc;			
+		}
+		div.error_dialog h1 { font-size: 100%; color: #f00; line-height: 1.5em; }
+	</style>
+
+  <div class="error_dialog shadow-box">
+    <h1><%=raw @title || 'La pagina che cerchi non esiste.'%></h1><!--TODO:I18n-->
+    <p><%=raw @message ||'Potresti aver sbagliato indirizzo, oppure la pagina non esiste più.'%></p>
+    <%=link_to t('buttons.go_back'), :back%>
+  </div>

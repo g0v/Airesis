@@ -1,0 +1,38 @@
+
+<div id="comment<%= comment.id %>" class="blogComment"<%if (comment.collapsed) %>style="display:none"<%end%>>	 
+	<div class="blog-comment-image">
+		<%= comment.user_image_tag(20) %>
+		<span class="blogPoster"><%=link_to_user comment.user %></span> <%= t('pages.blog_posts.show.comments_says') %>
+	</div>	
+	<div class="blog-comment-content">
+      <%=raw auto_link((h(comment.body)).gsub(/\n/, '<br/>'), :html => { :target => '_blank' }, :sanitize => false) do |text|
+        truncate(text, :length => 15)
+      end%>
+	</div>
+	<div class="blog-comment-footer">
+			<p>
+			Inserito il <span class="blogPostDate"><%= time_in_words(comment.created_at)%></span>
+			<% if current_user and (current_user.id == comment.user_id or current_user.id == @blog_post.user_id) %>
+					<%= link_to t('pages.blog_posts.comment.delete_button'), {:controller => "blog_comments", :action => "delete",  :blog_post_id => @blog_post.id, :id => comment.id},
+					:remote => "true",
+					:onclick => "return false;",
+					:class => "deleteCommentLink",					
+					:id => "delete#{comment.id}"%>
+			<% end %>	
+			</p>										   
+	</div>
+	<script type="text/javascript">
+	    
+		<%if (comment.collapsed) %>
+			$('#comment<%= comment.id%>').show(600);
+	    <%end%>
+	    
+	    
+	    $('#delete<%= comment.id%>').click(function(event) {
+	    	hiding(event,<%= comment.id%>);	    	
+	    });
+		
+		
+	</script>
+	<div style="clear:both;"></div>
+</div>

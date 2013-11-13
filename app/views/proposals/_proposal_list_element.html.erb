@@ -1,0 +1,71 @@
+<div id="proposal<%= proposal.id %>" class="proposal_list shadow-box">
+  <div class="category_icon">
+    <%= image_tag("proposal_categories/"+proposal.proposal_category_id.to_s + ".png", :alt => proposal.category.description, :title => proposal.category.description) %>
+  </div>
+  <div class="maintitle">
+    <%= link_to proposal.title, proposal.private ? group_proposal_url(proposal.presentation_groups.first, proposal) : proposal_url(proposal, subdomain: false), style: (proposal.rejected? ? 'text-decoration: line-through;' : ''), title: (proposal.rejected? ? 'Rifiutata' : nil) %>
+  </div>
+  <div class="datetime">
+    <% if proposal.in_valutation? %>
+        <%= t('pages.proposals.list.last_update', date: (l proposal.updated_at)) %>
+    <% elsif proposal.waiting_date? %>
+        <%= t('pages.proposals.list.waiting_date') %>
+    <% elsif proposal.waiting? %>
+        <%= t('pages.proposals.list.voting_from_to', from: (l proposal.vote_period.starttime) , to: (l proposal.vote_period.endtime))%>
+    <% elsif proposal.voting? %>
+        <%= t('pages.proposals.list.voting_until', date: (l proposal.vote_period.endtime)) %>
+    <% elsif proposal.voted? %>
+        <% if proposal.vote_period %>
+           <%= t('pages.proposals.list.votation_finished', date: (l proposal.vote_period.endtime))%>
+        <% else %>
+            <%= t('pages.proposals.list.no_votation') %>
+        <% end %>
+    <% end %>
+    <% unless proposal.is_polling? %>
+        <%= render :partial => 'proposals/rank_bar', :locals => {:proposal => proposal} %> <%= user_valutation_image(current_user, proposal) %>
+    <% end %>
+  </div>
+  <% unless proposal.interest_borders.empty? %>
+      <div class="borders">
+        <div class="title"><%= t('pages.proposals.list.interest_borders') %></div>
+        <% proposal.interest_borders[0..5].each do |ib| %>
+            <div class="border ui-state-highlight" title="<%= ib.territory_type %>">
+              <%= ib.territory.description %>
+            </div>
+        <% end %>
+        <div style="clear:both;"></div>
+      </div>
+  <% end %>
+
+  <div class="authors">
+    <div class="title"><%= t('pages.proposals.list.authors') %></div>
+    <% if signed_in? && (proposal.users.include? current_user) %>
+        <% proposal.users.each do |user| %>
+            <%= user_tag_mini(user) %>
+        <% end %>
+    <% else %>
+        <% proposal.users.each do |user| %>
+            <%= user_tag_mini(user, proposal) %>
+        <% end %>
+    <% end %>
+    <div style="clear:both;"></div>
+  </div>
+  <% unless proposal.groups.empty? %>
+      <div class="groups">
+        <div class="title"><%= t('pages.proposals.list.support_group') %></div>
+        <% proposal.groups[0..10].each do |group| %>
+            <div class="blogUserImage" title="<%= group.name %>">
+              <%= group.group_image_tag 20 %>
+            </div>
+        <% end %>
+        <div style="clear:both;"></div>
+
+      </div>
+  <% end %>
+
+
+  <div class="proposal_content">
+    <%= raw proposal.short_content %>
+    <%= link_to t('pages.proposals.index.continue_reading'), proposal.private ? [proposal.presentation_groups.first, proposal] : proposal %>
+  </div>
+</div>

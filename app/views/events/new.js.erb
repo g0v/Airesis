@@ -1,0 +1,69 @@
+
+$('#create_event').html("<%= escape_javascript(render(:partial => 'form'))%>");
+
+$('#create_event_dialog').dialog({
+	title : '<%=escape_javascript @group ? "#{@group.name} - #{t('pages.events.new.title')}" : t('pages.events.new.title')%>',
+	modal : true,
+	width : 740,
+	close : function(event, ui) {
+		$('#create_event_dialog').dialog('destroy');			
+	}
+});
+$("#create_event_dialog #event_meeting_attributes_place_attributes_comune_id").tokenInput("/comunes.json", {
+	crossDomain : false,
+	prePopulate : $('#event_meeting_attributes_place_attributes_comune_id').data("pre"),
+	hintText : '<%=t('pages.events.new.type_for_town')%>',
+	noResultsText : "<%=t('pages.events.new.no_town_found')%>",
+	searchingText : "<%=t('pages.events.new.town_searching')%>",
+	preventDuplicates : true,
+	tokenLimit : 1,
+    allowTabOut: true
+});
+
+if (!geocoder){
+    geocoder = new google.maps.Geocoder();}
+
+var latlng = new google.maps.LatLng(42.407235,14.260254);
+
+var myOptions = {
+	zoom : 5,
+	center: latlng,
+	mapTypeId : google.maps.MapTypeId.ROADMAP,
+	panControl : true,
+	streetViewControl : true,
+	mapTypeControl : false
+};
+
+
+map = new google.maps.Map(document.getElementById('create_map_canvas'), myOptions);
+<%if params[:type] == 'votation' %>
+    showPlace('2');
+<%end%>
+
+var panoramaOptions = {
+	position : latlng,
+	pov : {
+		heading : 34,
+		pitch : 10,
+		zoom : 1
+	}
+};
+marker = new google.maps.Marker({
+	map : map,
+	draggable : true
+});
+
+google.maps.event.addListener(marker, 'dragend', listenMarkerPosition);
+google.maps.event.addListener(map, 'center_changed', listenCenterChanged);
+google.maps.event.addListener(map, 'zoom_changed', listenZoomChanged);
+
+
+/*var panorama = new  google.maps.StreetViewPanorama(document.getElementById("panorama_canvas"),panoramaOptions);
+ map.setStreetView(panorama);*/
+
+putMarker("Italy");	//inizializza il marcatore sull'Italia
+
+disegnaDatePicker();   
+disegnaBottoni();
+
+$('#new_event').enableClientSideValidations();

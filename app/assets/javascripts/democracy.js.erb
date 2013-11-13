@@ -1,0 +1,626 @@
+!window.console && (console = { log: function () {
+}});
+
+function checkWidth() {
+    if (window.innerWidth < 1000) {
+        $('#menu-top, #menu-right .cont').css('position', 'absolute');
+        $('#submenu .borx').hide();
+        $('#submenu .tria').hide();
+    }
+    else {
+        $('#menu-top, #menu-right .cont').css('position', 'fixed');
+        $('#submenu .borx').show();
+        $('#submenu .tria').show();
+    }
+}
+
+$(function () {
+    /*$('#great_container').height($(window).height()-0);*/
+    var submenupannel = 0;
+
+    checkWidth();
+    $(window).resize(function () {
+        checkWidth();
+    });
+
+    disegnaBottoni();
+
+    if (window.location.hash) {
+        setTimeout(function () {
+            $(window.location.hash + " #commentcc").effect('highlight', {mode: 'show'}, 3000)
+        }, 500);
+    }
+
+
+    if ($('.sticky-anchor').length > 0) {
+        $(window).scroll(sticky_relocate);
+        sticky_relocate();
+    }
+
+    $("#logo-but").click(function (event) {
+        if (submenupannel == 0) {
+            submenupannel = 1;
+            $('#menu-top .group-cont').slideDown().delay(200);
+            $('#submenu .tria').hide();
+            $(this).addClass("sel");
+        } else {
+            submenupannel = 0;
+            $('#menu-top .group-cont').slideUp().delay(0);
+            $('#submenu .tria').delay(200).show(0);
+            $(this).removeClass("sel");
+        }
+        event.stopPropagation();
+    })
+    .keypress(function (event) {
+        if (event.which === 13)
+            $(this).click();
+    });
+
+
+    $('html').click(function () {
+        if (submenupannel == 1) {
+            submenupannel = 0;
+            $('#menu-top .group-cont').slideUp().delay(0);
+            $('#submenu .tria').delay(200).show(0);
+            $(this).removeClass("sel");
+        }
+    });
+
+    $('.group-cont').click(function (event) {
+        event.stopPropagation();
+    });
+});
+
+function sticky_relocate() {
+    var window_top = $(window).scrollTop();
+    $('.sticky-anchor').each(function () {
+        var div_top = $(this).offset().top;
+        if (window_top > (div_top - 90)) {
+            $('.sticky').addClass('stick');
+        } else {
+            $('.sticky').removeClass('stick');
+        }
+    });
+}
+
+function gbutton() {
+
+}
+
+function disegnaBottoni() {
+    $('.buttonStyle').gbutton();
+    $('.editButton').gbutton({icons: {primary: "ui-icon-pencil"}});
+    $('.personButton').gbutton({icons: {primary: "ui-icon-person"}});
+    $('.homeButton').gbutton({icons: {primary: "ui-icon-home"}});
+    $('.calendarButton').gbutton({icons: {primary: "ui-icon-calendar"}});
+    $('.commentButton').gbutton({icons: {primary: "ui-icon-comment"}});
+    $('.ideaButton').gbutton({icons: {primary: "ui-icon-lightbulb"}});
+    $('.deleteButton').gbutton({icons: {primary: "ui-icon-circle-close"}});
+    $('.trashButton').gbutton({icons: {primary: "ui-icon-trash"}});
+    $('.newButton').gbutton({icons: {primary: "ui-icon-plusthick"}});
+    $('.settingsButton').gbutton({icons: {primary: "ui-icon-wrench"}});
+    $('.mapButton').gbutton({icons: {primary: "ui-icon-image"}});
+    $('.forwardButton').gbutton({icons: {primary: "ui-icon-arrowthick-1-e"}});
+    $('.historyButton').gbutton({icons: {primary: "ui-icon-arrowreturnthick-1-w"}});
+    $('.notesButton').gbutton({icons: {primary: "ui-icon-note"}});
+    $('.supportButton').gbutton({icons: {primary: "ui-icon-heart"}});
+    $('.searchButton').gbutton({icons: {primary: "ui-icon-search"}});
+    $('.acceptButton').gbutton({icons: {primary: "ui-icon-check"}});
+    $('.saveButton').gbutton({icons: {primary: "ui-icon-check"}});
+    $('.updateButton').gbutton({icons: {primary: "ui-icon-check"}});
+    $('.rejectButton').gbutton({icons: {primary: "ui-icon-close"}});
+    $('.showAllButton').gbutton({icons: {primary: "ui-icon-script"}});
+    $('.inviteButton').gbutton({icons: {primary: "ui-icon-mail-open"}});
+    $('.documentButton').gbutton({icons: {primary: "ui-icon-document"}});
+    $('.closeButton').gbutton({icons: {primary: "ui-icon-close"}});
+    $('.draftsButton').gbutton({icons: {primary: "ui-icon-pencil"}});
+    $('.contributeButton').gbutton({icons: {primary: "ui-icon-signal-diag"}});
+    $('.pdfButton').gbutton({icons: {primary: "ui-icon-print"}});
+    $('.printButton').gbutton({icons: {primary: "ui-icon-print"}});
+    $('.resultsButton').gbutton({icons: {primary: "ui-icon-check"}});
+    $('.searchButton').gbutton({icons: {primary: "ui-icon-search"}});
+    $('.btn.help').gbutton({icons: {primary: "ui-icon-help"}});
+    $('.btn.loginButton').gbutton({icons: {primary: "ui-icon-key"}});
+    $('.disabledButton').gbutton("option", "disabled", true);
+
+
+    $(".disableButton")
+            .unbind("ajax:beforeSend")
+            .bind("ajax:beforeSend", function () {
+                hideDisableButton($(this));
+            })
+            .unbind("ajax:complete")
+            .bind("ajax:complete", function () {
+                showDisableButton($(this));
+            });
+
+    $(".btn.disable")
+            .unbind("ajax:beforeSend")
+            .bind("ajax:beforeSend", function () {
+                hideDisableGButton($(this));
+            })
+            .unbind("ajax:complete")
+            .bind("ajax:complete", function () {
+                showDisableGButton($(this));
+            });
+
+    $(".disableClickButton")
+            .bind("click", function () {
+                hideDisableButton($(this));
+            });
+
+
+    $(".disableForm")
+            .unbind("ajax:beforeSend")
+            .bind("ajax:beforeSend", function () {
+                hideDisableButton($('.disableButton', this));
+            })
+            .unbind("ajax:complete")
+            .bind("ajax:complete", function () {
+                showDisableButton($('.disableButton', this));
+            });
+
+    $('.ddslick').each(function () {
+        $(this).ddslick({
+            width: 300
+        });
+    });
+
+
+}
+
+function hideDisableButton(button) {
+    button.hide();
+    var toAdd = $('<div class="waitDiv"><%=image_tag "facebook-loader.gif", :alt => "loading..."%> </div>');
+    toAdd.width(button.outerWidth(true));
+    toAdd.height(button.outerHeight(true));
+    button.after(toAdd);
+}
+
+function showDisableButton(button) {
+    button.show();
+    $('.waitDiv').remove();
+}
+
+function hideDisableGButton(button) {
+    //button.hide();
+    var textInside = button.html();
+
+    var toAdd = $('<div class="load"><span>LOADING</span><%=image_tag "gloading.gif", :alt => ""%></div>');
+    button.width(button.width());
+    button.height(button.height());
+    button.empty();
+    button.append($('<span class="hidden">').append(textInside));
+    button.append(toAdd);
+    button.attr('disabled', 'disabled');
+    button.bind('click.killlink', function (e) {
+        e.preventDefault();
+        return false;
+    });
+}
+
+function showDisableGButton(button) {
+    var content = $('.hidden', button).html();
+    $('.load', button).remove();
+    button.html(content);
+    button.removeAttr('disabled');
+    button.unbind('click.killlink');
+}
+
+var et = {};
+
+
+function calculate_event_times() {
+    et.est = $("#event_starttime");
+    et.eet = $("#event_endtime");
+    et.eventStartTime = et.est.datetimepicker("getDate");
+    et.eventEndTime = et.eet.datetimepicker("getDate");
+    et.eventStartDate = new Date(et.eventStartTime);
+    et.eventEndDate = new Date(et.eventEndTime);
+
+    et.get = $("#groups_end_time");
+    et.cet = $("#candidates_end_time");
+    et.groupTime = et.get.datetimepicker("getDate");
+    et.candidatesTime = et.cet.datetimepicker("getDate");
+    et.groupDate = new Date(et.groupTime);
+    et.candidatesDate = new Date(et.candidatesTime);
+    console.log('endate: ' + et.eventEndDate);
+    console.log('startdate: ' + et.eventStartDate);
+    console.log('candidatedate: ' + et.candidatesDate);
+    console.log('entime: ' + et.eventEndTime / 1000);
+    console.log('startime: ' + et.eventStartTime / 1000);
+    console.log('candidatetime: ' + et.candidatesTime / 1000);
+}
+
+function addMinutes(date, minutes) {
+    return new Date(date.getTime() + minutes * 60000);
+}
+
+function startTimeChanged() {
+
+    //se la data inizio supera la data fine
+    if (!(et.eventEndDate.getTime() > et.eventStartDate.getTime())) {
+        //reimposto la data fine avanti
+        var min15 = addMinutes(et.eventStartTime, 15)
+        et.eet.datetimepicker("setDate", min15);
+    }
+
+    //se la data inizio supera la data fine gruppi
+    if (!(et.groupDate.getTime() > et.eventStartDate.getTime())) {
+        //reimposto la data gruppi avanti
+        et.get.datetimepicker("setDate", et.eventStartTime);
+    }
+
+    //se la data inizio supera la data fine candidati
+    if (!(et.candidatesDate.getTime() > et.eventStartDate.getTime())) {
+        //reimposto la data candidati avanti
+        et.cet.datetimepicker("setDate", et.eventStartTime);
+    }
+
+    //imposta come data minima quella di inizio dell'evento
+    var diff = Math.floor(( et.eventStartDate - new Date()) / 86400000);
+    //et.eet.datetimepicker("option","minDate",diff);
+}
+
+function endTimeChanged() {
+    //se la data inizio supera la data fine
+    if (!(et.eventEndDate.getTime() > et.eventStartDate.getTime())) {
+        //reimposta la data inizio indietro
+        var min15 = addMinutes(et.eventStartTime, -15)
+        et.est.datetimepicker("setDate", min15);
+    }
+}
+
+function groupsTimeChanged() {
+
+    //se supera la data fine candidati
+    if (!(et.candidatesDate.getTime() > et.groupDate.getTime())) {
+        //sposto la data fine candidati
+        $("#candidates_end_time").datetimepicker("setDate", et.groupTime);
+    }
+
+    //se supera la data fine evento
+    if (!(et.eventEndDate.getTime() > et.groupDate.getTime())) {
+        // sposto la data fine evento in avanti
+        et.eet.datetimepicker("setDate", et.groupTime);
+    }
+
+    //imposta un limite inferiore alla data fine dei candidati
+    var diff = Math.floor(( et.groupDate - new Date()) / 86400000);
+    $("#candidates_end_time").datetimepicker("option", "minDate", diff);
+}
+
+function candidatesTimeChanged() {
+    //se è inferiore alla data fine gruppi
+    if (!(et.candidatesDate.getTime() > et.groupDate.getTime())) {
+        //sposto indietro la data fine gruppi
+        $("#groups_end_time").datetimepicker("setDate", et.candidatesTime);
+    }
+
+    //se supera la data fine evento
+    if (!(et.eventEndDate.getTime() > et.candidatesDate.getTime())) {
+        // sposto la data fine evento in avanti
+        var min15 = addMinutes(et.candidatesTime, 15);
+        et.eet.datetimepicker("setDate", min15);
+    }
+}
+
+var datePickerOptions = {
+    dateFormat: "dd/mm/yy",
+    buttonImageOnly: true,
+    buttonImage: "<%= asset_path('iconCalendar.png') %>",
+    showOn: "both",
+    changeMonth: false,
+    changeYear: false,
+    yearRange: "c:c+10",
+    minDate: -2,
+    maxDate: "+10Y",
+    duration: "",
+    showTime: true,
+    constrainInput: true,
+    stepMinute: 5,
+    stepHour: 1,
+    altTimeField: "alt",
+    time24h: true
+}
+
+
+function disegnaDatePicker() {
+    //data inizio evento
+    $('#event_starttime').datetimepicker($.extend({}, datePickerOptions, {
+        onClose: function (date) {
+            calculate_event_times();
+            startTimeChanged();
+        }
+    }));
+
+    //data termine evento
+    $("#event_endtime").datetimepicker($.extend({}, datePickerOptions, {
+        onClose: function (date) {
+            calculate_event_times();
+            endTimeChanged();
+        }
+    }));
+
+    $("#candidates_end_time").datetimepicker($.extend({}, datePickerOptions, {
+        onClose: function (date) {
+            calculate_event_times();
+
+            candidatesTimeChanged();
+
+        }
+    }));
+
+    $('#groups_end_time').datetimepicker($.extend({}, datePickerOptions, {
+        onClose: function (date) {
+            calculate_event_times();
+
+            groupsTimeChanged();
+        }
+    }));
+}
+
+function deleteMe(el) {
+    $(el).remove();
+}
+
+function getURLParameter(name) {
+    return decodeURIComponent(
+            (location.search.match(RegExp("[?|&]" + name + '=(.+?)(&|$)')) || [, null])[1]
+    );
+}
+
+
+function array2dToJson(a, p, nl) {
+    var i, j, s = '{"' + p + '":[';
+    nl = nl || '';
+    for (i = 0; i < a.length; ++i) {
+        s += nl + array1dToJson(a[i]);
+        if (i < a.length - 1) {
+            s += ',';
+        }
+    }
+    s += nl + ']}';
+    return s;
+}
+
+function array1dToJson(a, p) {
+    var i, s = '[';
+    for (i = 0; i < a.length; ++i) {
+        if (typeof a[i] == 'string') {
+            s += '"' + a[i] + '"';
+        }
+        else { // assume number type
+            s += a[i];
+        }
+        if (i < a.length - 1) {
+            s += ',';
+        }
+    }
+    s += ']';
+    if (p) {
+        return '{"' + p + '":' + s + '}';
+    }
+    return s;
+}
+
+
+function doModal(el) {
+    el.modal({
+        opacity: 60,
+        overlayCss: {
+            backgroundColor: "#dddddd"
+        },
+        minWidth: '400px',
+        minHeight: '200px',
+        transient: 'true',
+        persist: 'true',
+        onShow: function (dialog) {
+            dialog.data.prepend('<div id="error_updating"></div>');
+        },
+        onClose: function (dialog) {
+            $('#error_updating').remove();
+            $.modal.close();
+        }
+    });
+}
+
+
+function stripScripts(s) {
+    var div = document.createElement('div');
+    div.innerHTML = s;
+    var scripts = div.getElementsByTagName('script');
+    var i = scripts.length;
+    while (i--) {
+        scripts[i].parentNode.removeChild(scripts[i]);
+    }
+    return div.innerHTML;
+}
+
+
+function read_notifica(el) {
+    var parent_ = $(el).parent()
+    parent_.addClass('old').removeClass('new');
+    var url_ = parent_.attr('href');
+    var type_id = $(el).data('type_id');
+    var box_ = $('.alert_box.logo[data-id=' + type_id + '] .notify');
+    var num_ = parseInt(box_.html());
+    if (num_ > 1) {
+        num_ -= 1;
+        box_.html(num_);
+    }
+    else {
+        box_.remove();
+    }
+    $.ajax({
+        dataType: 'js',
+        type: 'get',
+        url: url_
+    });
+}
+
+function set_noise_data() {
+    $('#comments_active').val($('#active .noise_element').map(function () {
+        return $(this).data('id')
+    }).get());
+    $('#comments_inactive').val($('#inactive .noise_element').map(function () {
+        return $(this).data('id')
+    }).get());
+}
+
+
+function sign_all_as_read(id) {
+    $.ajax({
+        data: 'id=' + id,
+        url: '/alerts/check_all/',
+        type: 'post',
+        dataType: 'js',
+        complete: function (data) {
+            $('#alert_cont_' + id + ' .mess.new').removeClass('new');
+            var box_ = $('.alert_box.logo[data-id=' + id + '] .notify');
+            box_.remove();
+        }
+    });
+}
+
+function secondsToString(seconds) {
+    var years = Math.floor(seconds / 31536000);
+    var max = 5;
+    var current = 0;
+    var str = "";
+    if (years && current < max) {
+        str += years + ' anni ';
+        current++;
+    }
+    var days = Math.floor((seconds %= 31536000) / 86400);
+    if (days && current < max) {
+        str += days + ' giorni ';
+        current++;
+    }
+    var hours = Math.floor((seconds %= 86400) / 3600);
+    if (hours && current < max) {
+        str += hours + ' ore ';
+        current++;
+    }
+    var minutes = Math.floor((seconds %= 3600) / 60);
+    if (minutes && current < max) {
+        str += minutes + ' minuti ';
+        current++;
+    }
+    var seconds = seconds % 60;
+    if (seconds && current < max) {
+        str += seconds + ' secondi ';
+        current++;
+    }
+
+    return str;
+}
+
+
+function addQueryParam( url, key, val ){
+    var parts = url.match(/([^?#]+)(\?[^#]*)?(\#.*)?/);
+    var url = parts[1];
+    var qs = parts[2] || '';
+    var hash = parts[3] || '';
+
+    if ( !qs ) {
+        return url + '?' + key + '=' + encodeURIComponent( val ) + hash;
+    } else {
+        var qs_parts = qs.substr(1).split("&");
+        var i;
+        for (i=0;i<qs_parts.length;i++) {
+            var qs_pair = qs_parts[i].split("=");
+            if ( qs_pair[0] == key ){
+                qs_parts[ i ] = key + '=' + encodeURIComponent( val );
+                break;
+            }
+        }
+        if ( i == qs_parts.length ){
+            qs_parts.push( key + '=' + encodeURIComponent( val ) );
+        }
+        return url + '?' + qs_parts.join('&') + hash;
+    }
+}
+
+//hide left panel if the window width is not large enough
+function hideLeftPanel() {
+    if (window.innerWidth < 1600) {
+        $('#menu-left').animate({'margin-left': '-300'}, 200);
+        $('#centerpanelextended').animate({'margin-left': '-10px', 'max-width': '600px'}, 200);
+    }
+    else if (window.innerWidth < 1800) {
+        $('#centerpanelextended').animate({'max-width': '600px'}, 200);
+    }
+    else {
+        //do nothing, large enogh
+    }
+}
+
+//hide left panel if the window width is not large enough
+function showLeftPanel() {
+    if (window.innerWidth < 1600) {
+        $('#menu-left').animate({'margin-left': '0'}, 200);
+        $('#centerpanelextended').animate({'margin-left': '280px', 'max-width': '800px'}, 200);
+    }
+    else if (window.innerWidth < 1800) {
+        $('#centerpanelextended').animate({'max-width': '800px'}, 200);
+    }
+    else {
+        //do nothing, large enogh
+    }
+}
+
+function fitRightMenu(fetched) {
+    if (window.innerWidth < 1600) {
+        fetched.animate({'left': '618px'}, 200);
+    }
+    else if (window.innerWidth < 1800) {
+        fetched.animate({'left': '908px'}, 200);
+    }
+    else {
+        fetched.animate({'left': '1108px'}, 200);
+    }
+    fetched.height($(window).height() - 110);
+
+    $(window).resize(function () {
+        fetched.height($(window).height() - 110);
+    });
+}
+
+
+
+jQuery.uaMatch = function( ua ) {
+    ua = ua.toLowerCase();
+
+    var match = /(chrome)[ \/]([\w.]+)/.exec( ua ) ||
+            /(webkit)[ \/]([\w.]+)/.exec( ua ) ||
+            /(opera)(?:.*version|)[ \/]([\w.]+)/.exec( ua ) ||
+            /(msie) ([\w.]+)/.exec( ua ) ||
+            ua.indexOf("compatible") < 0 && /(mozilla)(?:.*? rv:([\w.]+)|)/.exec( ua ) ||
+            [];
+
+    return {
+        browser: match[ 1 ] || "",
+        version: match[ 2 ] || "0"
+    };
+};
+
+// Don't clobber any existing jQuery.browser in case it's different
+if ( !jQuery.browser ) {
+    matched = jQuery.uaMatch( navigator.userAgent );
+    browser = {};
+
+    if ( matched.browser ) {
+        browser[ matched.browser ] = true;
+        browser.version = matched.version;
+    }
+
+    // Chrome is Webkit, but Webkit is also Safari.
+    if ( browser.chrome ) {
+        browser.webkit = true;
+    } else if ( browser.webkit ) {
+        browser.safari = true;
+    }
+
+    jQuery.browser = browser;
+}

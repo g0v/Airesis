@@ -1,0 +1,51 @@
+<div id="noise_manage_panel" title="Gestisci i contributi inutili alla discussione">
+  <h3><%= 'Trascina a destra i contributi che vuoi eliminare dalla discussione' %></h3>
+  <div style="float:left; width:  400px">
+    <h4><%= t('pages.proposals.manage_noise.available') %></h4>
+  </div>
+  <div style="float:left; width:  400px">
+    <h4><%= t('pages.proposals.manage_noise.removed') %></h4>
+  </div>
+  <div style="clear:both"></div>
+  <div style="float:left; width:  400px">
+    <div id="active" class="noiseSortable">
+      <% @proposal.contributes.unintegrated.removable.each do |contribute| %>
+          <div class="noise_element" data-id="<%=contribute.id%>">
+            <%= raw auto_link((h(contribute.content)).gsub(/\n/, '<br/>'), :html => {:target => '_blank'}, :sanitize => false) do |text|
+              truncate(text, :length => 15)
+            end %>
+          </div>
+      <% end %>
+    </div>
+  </div>
+  <div style="float:left; width:  400px">
+    <div id="inactive" class="noiseSortable">
+      <% @proposal.contributes.noise.each do |contribute| %>
+          <div class="noise_element" data-id="<%=contribute.id%>">
+            <%= raw auto_link((h(contribute.content)).gsub(/\n/, '<br/>'), :html => {:target => '_blank'}, :sanitize => false) do |text|
+              truncate(text, :length => 15)
+            end %>
+          </div>
+      <% end %>
+    </div>
+  </div>
+  <div class="clearboth"></div>
+  <%=form_for 'comments', url:  mark_noise_proposal_proposal_comments_path(@proposal.id), method: :post  do |f| %>
+      <%= f.hidden_field 'active' %>
+      <%= f.hidden_field 'inactive' %>
+      <input type="button" value="<%=t('buttons.cancel')%>" class="btn" onclick="$('#noise_manage_panel').dialog('destroy');$('#noise_manage_panel').remove();"/>
+      <%= f.submit t('buttons.save'), class: 'btn blue', onclick: 'set_noise_data();' %>
+  <%end%>
+
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        var oldList, newList, item;
+        $("#active, #inactive").sortable({
+            connectWith: ".noiseSortable",
+            forcePlaceholderSize: '100px'
+        }).disableSelection();
+    });
+
+</script>

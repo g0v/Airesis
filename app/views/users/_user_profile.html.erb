@@ -1,0 +1,148 @@
+<div class="header_image image_container">
+  <%= @user.user_image_tag 120 %>
+  <% if @user == current_user %>
+      <div class="caption">
+        <a style="color:white"><%= t('pages.users.show.edit_image') %></a>
+      </div>
+  <% end %>
+</div>
+
+
+<h4><%= t('pages.users.show.profile_info') %><%= t('pages.users.show.profile_info_unconfirmed') unless @user.confirmed? %></h4>
+<% if ::Configuration::user_messages %>
+    <span><%= link_to t('pages.users.show.send_message_button'), show_message_user_path(@user), :remote => true, :class => 'btn inviteButton disable' if can? :send_message, @user %></span>
+<% end %>
+
+
+<div class="user_profile shadow-box">
+  <div id="name_profile" class="profile_element">
+    <h2 class="label_profile"><%= t('pages.users.show.name_label') %>: </h2>
+
+    <div class="info_profile">
+      <%= h @user.name %>
+    </div>
+  </div>
+  <div id="surname_profile" class="profile_element">
+    <h2 class="label_profile"><%= t('pages.users.show.surname_label') %>: </h2>
+
+    <div class="info_profile">
+      <%= h @user.surname %>
+    </div>
+  </div>
+  <% if current_user == @user %>
+      <div id="email_profile" class="profile_element">
+        <h2 class="label_profile"><%= t('pages.users.show.email_label') %>: </h2>
+
+        <div class="info_profile">
+          <%= @user.email %> <%= raw "<span style=\"color:#888\">(#{@user.unconfirmed_email} #{t('pages.users.show.to_be_confirmed')})</span>" if @user.unconfirmed_email %>
+        </div>
+      </div>
+      <div id="password_profile" class="profile_element">
+        <h2 class="label_profile"><%= t('pages.users.show.password_label') %>: </h2>
+
+        <div class="info_profile">
+          *****
+        </div>
+      </div>
+  <% end %>
+
+  <% if @user.show_urls && ::Configuration::socialnetwork_active %>
+      <div id="facebook_profile" class="profile_element_no_click">
+        <h2 class="label_profile"><%= t('pages.users.show.facebook_url_label') %>: </h2>
+
+        <div class="info_profile">
+          <%= @user.facebook_page_url ? (link_to @user.facebook_page_url, @user.facebook_page_url, :target => "_blank") : '' %>
+        </div>
+      </div>
+      <div id="google_profile" class="profile_element_no_click">
+        <h2 class="label_profile"><%= t('pages.users.show.googleplus_url_label') %>: </h2>
+
+        <div class="info_profile">
+          <%= @user.google_page_url ? (link_to @user.google_page_url, @user.google_page_url, :target => "_blank", :rel => 'author') : '' %>
+        </div>
+      </div>
+      <div id="linkedin_profile" class="profile_element_no_click">
+        <h2 class="label_profile"><%= t('pages.users.show.linkedin_url') %>: </h2>
+
+        <div class="info_profile">
+          <%= @user.linkedin_page_url ? (link_to @user.linkedin_page_url, @user.linkedin_page_url, :target => "_blank") : '' %>
+        </div>
+      </div>
+  <% end %>
+  <% if @user.login %>
+      <div id="username_profile" class="profile_element_no_click">
+        <h2 class="label_profile"><%= t('pages.users.show.username_label') %>: </h2>
+
+        <div class="info_profile">
+          <%= h @user.login %>
+        </div>
+      </div>
+  <% end %>
+  <div id="confirmed_at_profile" class="profile_element_no_click">
+    <h2 class="label_profile"><%= t('pages.users.show.registered_from') %>: </h2>
+
+    <div class="info_profile">
+      <%= l (@user.confirmed? ? @user.confirmed_at : @user.created_at) %>
+    </div>
+  </div>
+
+</div>
+
+<% if current_user == @user %>
+    <div id="img_modal" class="edit_modal">
+      <form action="/users/<%= @user.id %>/update_image" id="upload_form" method="post" enctype="multipart/form-data">
+        <div style="float:left">
+          <h2 style="margin-top:0px;float:left;color: #333333;font-size: 110%;font-weight: bold;vertical-align: top"><%= t('pages.users.show.load_image') %></h2>
+
+          <div style="padding-left:150px">
+            <input type="file" name="image" accept="image/jpeg,image/png"/>
+            <br/>
+            <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>"/>
+            <input type="hidden" value="post" name="_method">
+
+            <div style="margin-top:8px">
+              <input type="button" value="<%= t('buttons.cancel') %>" onclick="$.modal.close();" class="btn"/>
+              <input type="submit" name="commit" value="<%= t('buttons.save') %>" class="btn blue"/>
+            </div>
+          </div>
+          <div><h4><%= t('pages.users.show.max_file_size') %></h4></div>
+        </div>
+      </form>
+    </div>
+    <script>
+
+        $(function () {
+            $.modal.close();
+
+            $('#name_profile').click(function () {
+                doModal($("#name_modal"));
+            });
+
+            $('#surname_profile').click(function () {
+                doModal($("#surname_modal"));
+            });
+
+            $('#email_profile').click(function () {
+                doModal($("#email_modal"));
+            });
+            <%if params[:insert_email]%>
+            $('#email_profile').click();
+            <%end%>
+
+            $('#password_profile').click(function () {
+                doModal($("#password_modal"));
+            });
+
+            $('.image_container div a').click(function () {
+                doModal($("#img_modal"));
+            });
+
+            $('.profile_element').css('cursor', 'pointer');
+
+            $('.profile_element').hover(function () {
+                $(this).toggleClass('profile_element_hover');
+            });
+
+        });
+    </script>
+<% end %>

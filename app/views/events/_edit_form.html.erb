@@ -1,0 +1,108 @@
+<%
+   if @group
+     controller= "events"
+     action ="update" %> <h3>Evento del gruppo: <%= @group.name %></h3>
+<% else
+     controller = "events"
+     action = "update" %>
+    admin event
+<% end %>
+<%= form_for @event, :url => {:controller => controller, :action => action}, :remote => true do |f| %>
+
+    <%= f.hidden_field :organizer_id %>
+    <div>
+      <table>
+        <tr>
+          <td width="60%">
+            <p>
+              <%= f.label :title %>
+              <br/>
+              <%= f.text_field :title %>
+            </p>
+
+            <p>
+              <%= f.label :description %>
+              <br/>
+              <%= f.text_area :description, :rows => 4, :cols => 30 %>
+            </p>
+
+            <p>
+              <%= f.label :event_type_id %>
+              <br/>
+              <%= @event.event_type.description %>
+              <%= f.hidden_field :event_type_id %>
+
+            </p>
+
+            <p>
+              <%= f.label :starttime %>
+              <br/>
+              <%= f.text_field :starttime, :value => @event.starttime, :class => "datePicker" %>
+            </p>
+
+            <p>
+              <%= f.label :endtime %>
+              <br/>
+              <%= f.text_field :endtime, :value => @event.endtime, :class => "datePicker" %>
+            </p>
+
+            <p>
+              <%= f.label :all_day %>
+              <%= f.check_box :all_day %>
+            </p>
+
+            <%= f.hidden_field :id, :value => @event.id %>
+            <%= f.hidden_field :commit_button, :value => "" %>
+            <p>
+              <a href="#" class="btn" onclick="$('#event_edit').dialog('destroy');$('#event_edit').remove();"><%= t('buttons.cancel') %></a>
+              <% if @event.event_series -%>
+                  <%= f.submit 'Aggiorna solo questa occorrenza', :onclick => "document.getElementById('event_commit_button').value = this.value" %>
+                  <%= f.submit 'Aggiorna tutte le occorrenze', :onclick => "document.getElementById('event_commit_button').value = this.value" %>
+                  <%= f.submit 'Aggiorna tutte le occorrenze successive', :onclick => "document.getElementById('event_commit_button').value = this.value" %>
+              <% else -%>
+                  <%= f.submit 'Aggiorna', :onclick => "document.getElementById('event_commit_button').value = this.value", :class => 'btn blue', :disable_with => t('updating') %>
+              <% end -%>
+            </p></td>
+          <td width="40%">
+
+            <%=f.fields_for :election, @election do |e|%>
+                <div id="elezione" style="display:none; width:370px;">
+                  <p>
+                    <%=raw "Le seguenti date devono essere comprese entro la data inizio e la data fine dell'evento." %><br />
+                    <!--<%=raw "La data fine iscrizione candidati deve essere successiva alla data fine iscrizione gruppi."%><br />-->
+                  </p>
+                  <!--<p>
+						<%= e.label :groups_end_time %><br/>
+						<%= e.text_field :groups_end_time, :class=>"datePicker", :id => "groups_end_time" %>
+						</p>-->
+                  <p>
+                    <%= e.label :candidates_end_time %><br/>
+                    <%= e.text_field :candidates_end_time, :class=>"datePicker", :id => "candidates_end_time" %>
+                  </p>
+                </div>
+            <%end%>
+
+            <%= f.fields_for :meeting, @meeting do |m| %>
+                <%= m.fields_for :place, @place do |p| %>
+                    <p id="edit_luogo">
+                      <%= p.label :comune_id, t('activerecord.attributes.event.meeting.place.comune_id') %><br/>
+                      <%= p.text_field :comune_id, :onchange => "codeAddress('edit_luogo');", "data-pre" => [{:id => @event.place.comune.id, :name => @event.place.comune.description}].to_json %>
+                      <%= p.label :address %><br/>
+                      <%= p.text_field :address, :onchange => "codeAddress('edit_luogo');" %>
+                      <%= p.hidden_field :latitude_original %>
+                      <%= p.hidden_field :longitude_original %>
+                      <%= p.hidden_field :latitude_center %>
+                      <%= p.hidden_field :longitude_center %>
+                      <%= p.hidden_field :zoom %>
+
+                    <div id="edit_map_canvas" style="width: 320px; height: 320px;"></div>
+                    <!--<div id="panorama_canvas" style="width: 320px; height: 120px;"></div>-->
+                    </p>
+                <% end %>
+            <% end %>
+          </td>
+        </tr>
+      </table>
+    </div>
+<% end %>
+

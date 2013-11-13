@@ -1,0 +1,375 @@
+<%= content_for :head do %>
+    <meta property="og:title" content="<%= @proposal.title %>"/>
+    <meta property="og:type" content="article"/>
+    <meta property="og:image" content="<%= "#{request.protocol}#{request.host_with_port}#{asset_path("logo120.png")}" %>"/>
+    <meta property="og:site_name" content="<%= APP_LONG_NAME %>"/>
+    <meta property="og:description" content="<%= @proposal.subtitle %>"/>
+    <meta property="fb:app_id" content="<%= FACEBOOK_APP_ID %>"/>
+    <meta property="article:published_time" content="<%= @proposal.created_at.strftime("%Y/%m/%d") %>">
+    <meta property="article:author" content="<%= (@proposal.users.first || @proposal.proposal_lives.first.users.first).fullname %>">
+    <meta property="article:section" content="<%= @proposal.category.description %>">
+    <meta name="description" content="<%= @proposal.subtitle %>">
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=<%= MAPS_API_KEY %>&sensor=false"></script>
+
+<% end %>
+
+<% if current_user %>
+    <%= subscribe_to proposal_path(@proposal) %>
+<% end %>
+<% @page_title = @proposal.title %>
+<script type="text/javascript">
+    $(function () {
+        //$('#svgintro').svg({onLoad: drawIntro});
+    })
+    /*
+     function drawIntro(svg) {
+     svg.polygon([[10,10],[400,10],[200,200]],
+     {fill: 'none', stroke: 'blue', strokeWidth: 2});
+
+    <%#@proposal.comments.each do |c| %>$
+     /*svg.circle(200,100,2)*/
+    <%#end%>
+
+
+    /*}*/
+    <%if current_user %>
+    Airesis.can_partecipate = <%=can? :partecipate, @proposal%>;
+    Airesis.image_tag = $('<%=j current_user.user_image_tag 32%>');
+    <%end%>
+
+</script>
+<!--
+<div id="svgintro" style="height:600px;width:600px;">
+</div>
+-->
+<%= render :partial => "steps/#{@step.fragment}", :layout => "layouts/tutorial" if @step %>
+
+<%= render :partial => 'proposals/show_proposal' %>
+
+<% if ((can? :partecipate, @proposal) || (!current_user && !@proposal.private)) && (!@proposal.voting?) %>
+    <%= render :partial => @proposal_comment = ProposalComment.new %>
+    <div id="flash_messages_comments" style="height:20px"></div>
+<% else %>
+    <div style="height:20px"></div>
+<% end %>
+
+
+<% if @proposal.voting? %>
+    <h4><%= t('pages.proposals.show.no_contributes') %></h4>
+<% else %>
+    <div id="order_bar">
+      <%= render :partial => 'proposal_comments/order_bar' %>
+    </div>
+
+    <div id="loading_contributes" style="margin:auto;text-align:center;">
+      <%= image_tag 'ajax-loader.gif' %>
+      <br/>
+      <b><%= t('pages.proposals.show.loading_contributions') %></b>
+    </div>
+    <div id="proposalCommentsContainer">
+
+    </div>
+
+    <div id="loading_results" style="display:none;">
+      <span><%= t('pages.proposals.show.previos_contributes') %></span>
+    </div>
+
+
+    <%= render :partial => 'report_contribute' %>
+
+<% end %>
+
+<script type="text/javascript">
+    var clicked;
+
+    var currentView = <%=current_user ? 1 : 3 %>;
+    var contributes = [];
+    var checkActive = false;
+
+    var $viewport = $('html, body');
+
+
+    function scroll_to_vote_panel() {
+        $viewport.animate({
+            scrollTop: $(".vote_panel").offset().top - 100
+        }, 2000);
+
+        // Stop the animation if the user scrolls. Defaults on .stop() should be fine
+        $viewport.bind("scroll mousedown DOMMouseScroll mousewheel keyup", function (e) {
+            if (e.which > 0 || e.type === "mousedown" || e.type === "mousewheel") {
+                $viewport.stop().unbind('scroll mousedown DOMMouseScroll mousewheel keyup'); // This identifies the scroll as a user action, stops the animation, then unbinds the event straight after (optional)
+            }
+        });
+        return false;
+    }
+
+    function contribute(section_id) {
+        $('#proposal_comment_section_id').val(section_id);
+        $viewport.animate({
+            scrollTop: $("#proposal_comment_content").offset().top - 150
+        }, 2000, function () {
+            $('#proposal_comment_content').focus();
+            $('#comment-form-comment').effect('highlight', {}, 3000);
+        });
+
+
+        // Stop the animation if the user scrolls. Defaults on .stop() should be fine
+        $viewport.bind("scroll mousedown DOMMouseScroll mousewheel keyup", function (e) {
+            if (e.which > 0 || e.type === "mousedown" || e.type === "mousewheel") {
+                $viewport.stop().unbind('scroll mousedown DOMMouseScroll mousewheel keyup'); // This identifies the scroll as a user action, stops the animation, then unbinds the event straight after (optional)
+            }
+        });
+
+        return false;
+    }
+
+    function hiding(event, id) {
+        if (confirm('<%=t('pages.proposals.show.delete_contribute_confirmation')%>')) {
+            $('#comment' + id).hide(600, function () {
+                $.ajax({
+                    dataType: 'json',
+                    type: 'delete',
+                    url: '/proposals/<%=@proposal.id%>/proposal_comments/' + id
+                });
+            });
+            return false;
+        }
+        return false;
+    }
+
+    var retval = false;
+    function hideAndDeleteReply(event, id) {
+        if (!retval) {
+            clicked = $('#delete' + id);
+            console.log(clicked);
+            if (confirm('<%= t('pages.proposals.show.delete_suggestion_confirmation')%>')) {
+                $('#replys' + id).hide(600, function () {
+                    retval = true;
+                    clicked.click();
+                });
+                event.stopPropagation();
+                return false;
+            }
+            event.stopPropagation();
+            return false;
+        }
+        else {
+            retval = false;
+            return true;
+        }
+    }
+
+    function report_contribute(id) {
+        $('.report_menu').hide();
+        $('.report_contribute.visible').removeClass('visible');
+        $('#report_contribute_id').val(id);
+        $('input[name=reason]').removeAttr('checked');
+        doModal($('#report_contribute'));
+    }
+
+    function hide_vote_controls() {
+        //nascondi i pulsanti di valutazione quando vengono cliccati
+        $('.vote_comment').bind('ajax:beforeSend', function (n, xhr) {
+            $(this).parent().find('.vote_comment').hide();
+            $(this).parent().find('.loading').show();
+
+        });
+
+        $('.votedown-mini').bind('ajax:beforeSend', function (n, xhr) {
+            var num = $(this).data('id');
+            $(this).parent().find('.vote_comment').hide();
+            $(this).parent().find('.loading').show();
+            $('.reply_textarea[data-id=' + num + ']').focus().attr('placeholder', 'Indica il motivo della tua valutazione negativa').effect('highlight', {}, 3000);
+        });
+
+
+        initialize_hidden_menu();
+
+
+    }
+
+
+    function initialize_hidden_menu() {
+        $('.hidden_menu')
+                .click(function (event) {
+                    event.stopPropagation();
+                });
+
+        $('html').click(function () {
+            $('.hidden_menu').hide();
+            $('.hidden_link.visible').removeClass('visible');
+        });
+
+        $('.hidden_link')
+                .click(function (event) {
+                    $(this).addClass('visible');
+                    $(this).next().show().position({
+                        my: "right top",
+                        at: "right bottom",
+                        of: $(this)
+                    });
+                    event.stopPropagation();
+                });
+    }
+
+
+    function checkScroll() {
+        <%unless @proposal.voting? %>
+        if (nearBottomOfPage() && checkActive) {
+            checkActive = false;
+            currentPage++;
+            $.ajax({ url: '<%=list_proposal_proposal_comments_url(@proposal) %>',
+                data: {page: currentPage,
+                    view: currentView,
+                    contributes: contributes
+                },
+                type: 'get'});
+        } else {
+            setTimeout("checkScroll()", 250);
+        }
+        <%end%>
+    }
+
+
+    function open_right_contributes(_this) {
+        var section_id = _this.attr("data-section_id");
+        _this.attr("data-status", 1);
+        $('#suggest').show();
+        _this.parent().find(".tria").show();
+        _this.parent().addClass("sel");
+        $('.text', _this).text('<%=j t('pages.proposals.show.close_contribute')%>');
+        hideLeftPanel();
+        var fetched = $('.suggestion_right[data-section_id=' + section_id + ']');
+        fitRightMenu(fetched);
+        $('.suggestion_right[data-section_id=' + section_id + ']').fadeIn();
+        _this.next().show();
+
+    }
+
+
+    function close_right_contributes(_this) {
+        var section_id = _this.attr("data-section_id");
+        _this.attr("data-status", 2);
+        $('.suggestion_right[data-section_id=' + section_id + ']').hide();
+        _this.parent().find(".tria").hide();
+        $('.text', _this).text('<%=j t('pages.proposals.show.give_contribute')%>').append(" (" + _this.attr('data-unread_contributes_num') + "/" + _this.attr('data-contributes_num') + ")");
+        $('#menu-left').animate({'margin-left': '0'}, 200);
+        $('#centerpanelextended').animate({'margin-left': '280px', 'max-width': '800px'}, 200);
+        $('.suggestion_right[data-section_id=' + section_id + ']').animate({'left': '1110px'}, 200);
+
+        _this.next().hide();
+    }
+
+    $(function () {
+        $('#centerpanelextended').css('max-width', '800px');
+
+        <%unless @proposal.voting? %>
+        currentPage++;
+        $.ajax({ url: '<%=list_proposal_proposal_comments_url(@proposal) %>',
+            data: {page: currentPage,
+                view: currentView,
+                contributes: contributes
+            },
+            type: 'get',
+            complete: function () {
+                $("#loading_contributes").hide();
+            }
+        });
+        <%end%>
+
+        <%= render :partial => 'show_tooltips' %>
+
+        //0 - not fetched - closed
+        //1 - fetched - open
+        //2 - fetched - closed
+
+        console.log('attaching event');
+        $(".contributeButton").click(function (event, comment_id) {
+            console.log('hi');
+            var this_ = $(this);
+            var section_id = $(this).attr("data-section_id");
+            var this_status = $(this).attr("data-status");
+
+            $(".contributeButton").each(function () {
+                var his_status = $(this).attr("data-status");
+                var his_section_id = $(this).attr("data-section_id");
+                if (this_ != $(this)) {
+                    if (his_status == 1) {
+                        $(this).attr("data-status", 2);
+                        $('.suggestion_right[data-section_id=' + his_section_id + ']').hide();
+                        $(this).parent().find(".tria").hide();
+                        $('.text', this).text('<%=j t('pages.proposals.show.give_contribute')%>').append(" (" + $(this).attr('data-unread_contributes_num') + "/" + $(this).attr('data-contributes_num') + ")");
+                        if (window.innerWidth < 1600) {
+                            //$('#menu-left').animate({'margin-left': '0'}, 200);
+                            //$('#centerpanelextended').animate({'margin-left': '280px','max-width': '800px'}, 200);
+                            $('.suggestion_right[data-section_id=' + his_section_id + ']').animate({'left': '1110px'}, 200);
+                        }
+
+                        $(this).next().hide();
+                    }
+                }
+            });
+
+            $(".suggest .tria").hide();
+            $(".suggest").removeClass("sel");
+            if (this_status == 0) { //closed and never fetched
+                $(this).attr("data-status", 1);
+                $('#suggest').show();
+                $(this).parent().find(".tria").show();
+                $(this).parent().addClass("sel");
+                $('.text', this).text('<%=j t('pages.proposals.show.close_contribute')%>');
+                hideLeftPanel();
+                var fetched = $('<div data-section_id="' + section_id + '"class="suggestion_right"></div>');
+
+
+                fetched.append('<div style="margin:auto;text-align:center;"><%= image_tag 'ajax-loader.gif' %><br/><b><%= t('pages.proposals.show.loading_contributions') %></b></div>');
+
+
+                $('#centerpanelextended').append(fetched);
+                fitRightMenu(fetched);
+
+                $(this).next().show();
+
+                $.ajax({ url: '<%=left_list_proposal_proposal_comments_url(@proposal) %>',
+                    data: {
+                        comment_id: comment_id,
+                        section_id: section_id,
+                        disable_limit: true,
+                        view: <%=current_user ? 1 : 3 %>
+                    },
+                    type: 'get',
+                    complete: function () {
+                        $(".loading", fetched).hide();
+                    }
+                });
+
+                $('.suggestion_right')
+                        .bind('mousewheel DOMMouseScroll', function (e) {
+                            if (e.originalEvent) e = e.originalEvent;
+                            var delta = e.wheelDelta || -e.detail;
+                            this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+                            e.preventDefault();
+                        });
+
+            }
+            else if (this_status == 2) { //closed and fetched
+                open_right_contributes($(this));
+            }
+            else {   //status == 1  //fetched and open
+                close_right_contributes($(this));
+            }
+            return false;
+        });
+
+        <%if params[:section_id] %>
+        $('.contributeButton[data-section_id=<%=params[:section_id]%>]').trigger('click', [<%=params[:comment_id]%>]);
+        <%end%>
+
+    });
+</script>
+
+
+<% content_for :left_panel do %>
+    <%= render 'proposals/left_panel' %>
+<% end %>
+

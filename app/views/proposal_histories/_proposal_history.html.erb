@@ -1,0 +1,40 @@
+<h4 style="float:left"><%= t('pages.proposal_histories.editor_name') %> </h4> <div style="float:left;margin-top: 20px;margin-left: 15px;"><%= user_tag(@revision.user, @revision.proposal) %></div><div class="clearboth"></div>
+<% @revision.section_histories.each do |section| %>
+    <div class="proposal_main">
+      <h3>
+        <div class="tit1">
+          <div class="tit2">
+            <%= section.title %>
+          </div>
+        </div>
+      </h3>
+
+      <div class="proposal_content">
+        <%= sanitize(section.paragraphs.first.content) %>
+      </div>
+    </div>
+<% end %>
+
+<% if @revision.solution_histories.size > 0 %>
+
+    <% @revision.solution_histories.each do |solution| %>
+        <% solution.section_histories.each do |section| %>
+            <div class="proposal_main">
+              <h3>
+                <div class="tit1">
+                  <div class="tit2">
+                    <%= section.title %>
+                  </div>
+                </div>
+              </h3>
+              <div class="proposal_content">
+                <%= sanitize(section.paragraphs.first.content) %>
+              </div>
+            </div>
+        <% end %>
+    <% end %>
+<% end %>
+
+<% @revision.contributes.each do |comment| %>
+    <%= render :partial => 'proposals/integrated_comment', :locals => {:comment => comment} %>
+<% end %>

@@ -1,0 +1,34 @@
+<h4><%= t('pages.alerts.index.new_not_read') %></h4>
+<ul>
+  <b><%= t('pages.alerts.index.no_new') if @new_user_alerts.empty? %></b>
+  <% @new_user_alerts.each do |user_alert| %>
+      <li>
+        <%= link_to user_alert.notification.url do %>
+            <%= user_alert.created_at.strftime("%d/%m/%Y %H:%M") %> - <%= raw user_alert.notification.message %>
+        <% end %>
+      </li>
+  <% end unless @new_user_alerts.empty? %>
+</ul>
+
+<br/>
+<h4><%= t('pages.alerts.index.old_not_read') %></h4>
+<ul>
+  <b><%= t('pages.alerts.index.no_old') if @old_user_alerts.empty? %></b>
+  <% @old_user_alerts.each do |user_alert| %>
+      <li>
+        <%= link_to user_alert.notification.url do %>
+            <%= user_alert.created_at.strftime("%d/%m/%Y %H:%M") %> - <%= raw user_alert.notification.message %>
+        <% end %>
+      </li>
+  <% end unless @old_user_alerts.empty? %>
+</ul>
+
+<script type="text/javascript">
+    $.ajax({
+        data: '',
+        dataType: 'script',
+        type: 'get',
+        url: "/alerts/read_alerts"
+    });
+</script>
+

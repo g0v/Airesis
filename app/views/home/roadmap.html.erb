@@ -1,0 +1,63 @@
+<% @page_title = "Road Map e futuri sviluppi "%>
+<% @page_descr = "Il nostro percorso per realizzare un nuovo software, una idea nata con internet capace di far evolvere la democrazia. "%>
+
+<h2  id="strumento">Destinazione: la democrazia diretta</h2>
+<p>Airesis nasce dall'incontro di due progetti avviati oltre due anni fa a seguito della necessit&agrave; di usufruire di uno strumento informatico che potesse integrare le funzioni principali di social network, gestione di eventi e sistema deliberativo di massa.</p>
+<p>A Marzo 2012, durante l'incontro "Cittadini a cinque stelle" organizzato a Rimini, Rodi Alessandro con il progetto Airesis entra in contatto con Nicola Giulietti ed il progetto Agora 2.0: da una parte c'era un buon software, mentre dall'altra un'ottima analisi delle caratteristiche avrebbe dovuto avere un portale per la democrazia partecipata.</p>
+<p>In seguito a tale incontro si è deciso di collaborare nella costruzione dell'applicazione open source perchè potesse implementare le funzionalità individuate dal gruppo di Agora 2.0 in un anno di lavoro.</p>
+<p>La missione &egrave; ambiziosa, ma sappiamo che &egrave; possibile realizzarla con gli strumenti giusti, passo dopo passo.</p>
+<p>Grazie alla nostra determinazione quello che sembrava un sogno di libert&agrave;, ha trovato il supporto di numerose persone ed 
+	il sostegno di programmatori, analisti, matematici, grafici e cittadini responsabili.
+<p>Attualmente le release del software avvengono a cadenza mensile o bimestrale per soddisfare le richieste e le esigenze degli utenti,	nell'ottica del miglioramento continuo.</p>
+
+<h2 id="strumento">L'evoluzione di Airesis</h2>
+<p>Nell'elenco sottostante sono riportati i cambiamenti avvenuti in Airesis durante la sua evoluzione. Sono evidenziate anche le novit&agrave; previste per le versioni future. Controlla spesso questa pagina se sei interessato a conoscere quali funzionalit&agrave; sono in fase di sviluppo!.</p>
+<div id="loading_roadmap" style="margin:auto;text-align:center;">
+  <%= image_tag 'ajax-loader.gif'%><br />
+  <b><%= t('loading_roadmap') %></b>
+</div>
+
+<script type=text/javascript>
+    $.ajax({
+        url: '<%=bugtracking_path%>',
+        format: 'json',
+        success: function(resp) {
+            var versions = resp.data[0].versions;
+            var issues = resp.data[1].issues;
+
+            versions = versions.sort(function(a,b) {
+                var date_a = $.datepicker.parseDate('yy-mm-dd', a.due_date);
+                var date_b = $.datepicker.parseDate('yy-mm-dd', b.due_date);
+                return date_a > date_b ? -1 : (date_a < date_b ? 1 : 0);
+            });
+
+            var container_ = $('<div id="roadmap_container"></div>');
+
+            var containers = {};
+            for (var i = 0; i < versions.length; i++) {
+                var version = versions[i];
+                var vcontainer_ = $('<div></div>');
+                vcontainer_.append($('<h3>'+version.name+'</h3>'));
+                container_.append(vcontainer_);
+                var issuecontainer_ = $('<ul></ul>');
+                container_.append(issuecontainer_);
+                containers[version.id] = issuecontainer_;
+            }
+
+            for (var i = 0; i < issues.length; i++) {
+                var issue = issues[i];
+                if (issue.fixed_version != null) {
+                    var vcontainer_ = containers[issue.fixed_version.id];
+                    var icontainer_ = $('<li><a href="http://<%=BUGTRACKING_URL%>/issues/'+issue.id+'" target="_blank">'+issue.subject+'</a></li>');
+                    vcontainer_.append(icontainer_);
+                }
+
+                //vcontainer_.append($('<h3>'+version.name+'</h3>'));
+                //container_.append(vcontainer_);
+            }
+
+            $('#loading_roadmap').before(container_);
+            $('#loading_roadmap').remove();
+        }
+    })
+</script>

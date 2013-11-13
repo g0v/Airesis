@@ -1,0 +1,44 @@
+<%if params[:reset]%>
+	contributes = [];
+	$('#order_bar').html("<%= escape_javascript(render(:partial => 'order_bar'))%>");
+	$('#proposalCommentsContainer').html("<%= escape_javascript(render(:partial => 'proposals/comments'))%>");
+	$('#loading_contributes').hide();
+<%else%>
+	$('#proposalCommentsContainer').append("<%= escape_javascript(render(:partial => 'proposals/comments'))%>");
+<%end%>
+
+contributes.push(<%= @proposal_comments.map{|p| p.id}.join(',') %>);
+//console.log('contributi mostrati:' + contributes);
+//console.log('total pages: <%=@total_pages%>');
+//console.log('current page: <%=@current_page%>');
+
+firstCheck = false;
+<%if @total_pages > @current_page%>
+  $('#loading_results').show();
+  if (!firstCheck) {
+    checkScroll();
+    firstCheck = true;
+  }
+  checkActive = true;
+<%else%>
+  $('#loading_results').hide();
+<%end%>
+
+$('.reply_textarea').elastic();
+disegnaBottoni();
+
+/*$('.rankingpanelcontainer .votedup-mini').qtip({
+    position: {
+        at: 'center top',
+        my: 'bottom center',
+        viewport: $(window),
+        effect: false,
+        adjust: {
+            method: 'shift',
+            x: -1, y: -10
+        }
+    },
+    style: {
+        classes: 'qtip-dark'
+    }
+});*/
