@@ -6,3 +6,9 @@
 5. rake db:seed (input initial data)
 6. add line "127.0.0.1 www.airesis.it" to /etc/hosts
 7. use www.airesis.it:3000 to dev
+
+#TODO
+1. 除了首頁 CSS 都噴掉了，要調整
+2. 修改界面成動民主界面
+3. 或許需要一份教學文件
+4. 可能要畫很多圖
