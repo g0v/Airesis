@@ -1,4 +1,4 @@
-＃動民主系統專案
+#動民主系統專案
 ---
 本專案 fork 自 (Airesis)[http://github.com/coorasse/Airesis] 系統
 
