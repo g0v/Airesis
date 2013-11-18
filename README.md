@@ -1,6 +1,6 @@
 #動民主系統專案
 ---
-本專案 fork 自 (Airesis)[http://github.com/coorasse/Airesis] 系統
+本專案 fork 自 [Airesis](http://github.com/coorasse/Airesis) 系統
 
 #Deploy info
 1. install postgresql & fix config/database.yml 
